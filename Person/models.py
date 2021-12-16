@@ -4,13 +4,14 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+
 class MyUser(AbstractUser):
 
     class StatusPerson(models.TextChoices):
         Pr = 'p', 'Professor'
         St = 's', 'Student'
 
-    status_ticket = models.CharField(max_length=2,
+    status = models.CharField(max_length=2,
                                      verbose_name='Статус юзера',
                                      choices=StatusPerson.choices,
                                      default=StatusPerson.Pr)

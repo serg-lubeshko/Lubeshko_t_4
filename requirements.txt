@@ -1,3 +1,4 @@
+pip==21.3.1
 asgiref==3.4.1
 Django==3.2.6
 django-filter==21.1

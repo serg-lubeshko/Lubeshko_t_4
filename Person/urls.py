@@ -4,7 +4,7 @@ from Person.views import UserRegister
 
 urlpatterns = [
 
-    path('register/', UserRegister.as_view()),
+    path('create/', UserRegister.as_view()),
 
 
 ]

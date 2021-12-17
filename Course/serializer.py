@@ -5,11 +5,11 @@ from Person.serializers import UserSerializer
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    author = UserSerializer()
+    author = UserSerializer(read_only=True)
 
     class Meta:
         model = Course
-        fields = ['id', 'author', 'name', 'description', 'published_at']
+        fields = ['id', 'author', 'name', 'description', 'published_at', 'update_at']
 
 
 class StudCourSerializer(serializers.ModelSerializer):

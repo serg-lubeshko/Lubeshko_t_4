@@ -15,7 +15,8 @@ class Course(models.Model):
     """
     name = models.CharField(max_length=255, verbose_name='Название курса')
     description = models.TextField(verbose_name='Описание', blank=True)
-    published_at = models.DateField(auto_now_add=True, verbose_name='Опубликовано')
+    published_at = models.DateTimeField(auto_now_add=True, verbose_name='Опубликовано')
+    update_at = models.DateTimeField(auto_now=True, verbose_name='Последние изменения')
     author = models.ForeignKey(MyUser, related_name='author_user', verbose_name='автор курса', on_delete=models.CASCADE)
     student = models.ManyToManyField(MyUser, related_name='student_user', verbose_name='студент курса',
                                      through='StudCour', )

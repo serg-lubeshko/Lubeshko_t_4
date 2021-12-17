@@ -28,10 +28,10 @@ class StudCourSerializer(serializers.ModelSerializer):
 class TeachCourSerializer(serializers.ModelSerializer):
     """ >>> AddTeacher """
 
-    teacher = UserSerializer(many=True)
+    # teacher = UserSerializer()
 
     class Meta:
-        model = Course
+        model = TeachCour
         fields = ['teacher',]
 
     # def _is_my_find(self, obj):

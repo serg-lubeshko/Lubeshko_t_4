@@ -18,9 +18,9 @@ class Course(models.Model):
     published_at = models.DateTimeField(auto_now_add=True, verbose_name='Опубликовано')
     update_at = models.DateTimeField(auto_now=True, verbose_name='Последние изменения')
     author = models.ForeignKey(MyUser, related_name='author_user', verbose_name='автор курса', on_delete=models.CASCADE)
-    student = models.ManyToManyField(MyUser, related_name='student_user', verbose_name='студент курса',
+    student = models.ManyToManyField(MyUser, related_name='student', verbose_name='студент курса',
                                      through='StudCour', )
-    teacher = models.ManyToManyField(MyUser, related_name='teacher_user', verbose_name='соавтор курса',
+    teacher = models.ManyToManyField(MyUser, related_name='teacher', verbose_name='соавтор курса',
                                      through='TeachCour', )
 
     def __str__(self):

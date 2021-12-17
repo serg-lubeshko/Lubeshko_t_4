@@ -1,5 +1,7 @@
 from django.db.models import Q
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, views, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,9 +13,10 @@ from Person.serializers import UserSerializer
 from conf.permission import IsOwnerOrReadOnly
 
 
+
 class CourseList(generics.ListCreateAPIView):
     """Список своих курсов и приглашенных, а также добавление нового"""
-    # authentication_classes = [SessionAuthentication, ]
+
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly ]
     serializer_class = CourseSerializer
 
@@ -33,6 +36,7 @@ class CourseList(generics.ListCreateAPIView):
 
 
 class DetailCourse(generics.RetrieveUpdateDestroyAPIView):
+    "Могут смотреть студенты и профессора свой курс"
 
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly ]
     serializer_class = CourseSerializer
@@ -46,7 +50,7 @@ class DetailCourse(generics.RetrieveUpdateDestroyAPIView):
 
 
 class AddTeacher(views.APIView):
-    ''' Добавить препода'''
+    ''' Добавить препода????????????????'''
 
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly ]
     serializer_class = TeachCourSerializer

@@ -7,6 +7,9 @@ from Person.serializers import UserSerializer
 
 
 class CourseSerializer(serializers.ModelSerializer):
+    """>>>  CourseList  >>> DetailCourse"""
+
+
     author = UserSerializer(read_only=True)
 
     class Meta:
@@ -23,6 +26,8 @@ class StudCourSerializer(serializers.ModelSerializer):
 
 
 class TeachCourSerializer(serializers.ModelSerializer):
+    """ >>> AddTeacher """
+
     teacher = UserSerializer(many=True)
 
     class Meta:
@@ -34,10 +39,10 @@ class TeachCourSerializer(serializers.ModelSerializer):
     #     return prof
 
 
-class TeacherAddSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True)
-    teacher = UserSerializer()
-
-    class Meta:
-        model = Course
-        fields = ['id', 'author', 'name', 'description', 'published_at', 'update_at', 'teacher']
+# class TeacherAddSerializer(serializers.ModelSerializer):
+#     author = UserSerializer(read_only=True)
+#     teacher = UserSerializer()
+#
+#     class Meta:
+#         model = Course
+#         fields = ['id', 'author', 'name', 'description', 'published_at', 'update_at', 'teacher']

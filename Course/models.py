@@ -4,15 +4,8 @@ from Person.models import MyUser
 
 
 class Course(models.Model):
-    """
-    
-    CRUD своих курсов
-    Просмотр доступных курсов
-    
-    Добавление/Удаление студента к своему курсу  - создать поле
-    Добавление нового преподавателя к своему курсу  создать поле + на самого препода = 2 поля
-    (у одного курса много преподов, как и препода много курсов м2м
-    """
+    """ Модель курсов """
+
     name = models.CharField(max_length=255, verbose_name='Название курса')
     description = models.TextField(verbose_name='Описание', blank=True)
     published_at = models.DateTimeField(auto_now_add=True, verbose_name='Опубликовано')

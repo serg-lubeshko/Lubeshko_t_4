@@ -59,16 +59,28 @@ class CoursesProfessorsSerializer(serializers.ModelSerializer):
 
 
 
-class AddP(serializers.Serializer):
+class AddTeacherSerializer(serializers.Serializer):
     """>>>  CourseList  >>> DetailCourse"""
 
 
     # author = UserSerializer(read_only=True)
-    color = serializers.ChoiceField(choices=[i.username for i in MyUser.objects.filter(status='p')])
+    teacher = serializers.ChoiceField(choices=[i.username for i in MyUser.objects.filter(status='p')])
+    # course_id= serializers.IntegerField(read_only=True)
 
 
 
     class Meta:
         # model = Course
-        fields = ['colour']
-    
+        fields = ['teacher']
+
+        def validate_teacher(self, data):
+            """
+            Check that start is before finish.
+            """
+            if data['teacher'] == 'puser2':
+                print(data)
+                raise serializers.ValidationError("finish must occur after start")
+            return data
+        
+
+        # return  TeachCour.objects.create(**validatted_data)

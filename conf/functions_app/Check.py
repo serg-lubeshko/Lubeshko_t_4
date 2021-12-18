@@ -1,8 +1,4 @@
-from rest_framework.response import Response
-
-from rest_framework import status
-
-from Course.models import Course
+from Course.models import Course, TeachCour
 from Person.models import MyUser
 from conf.functions_app.get_object_or_None import get_object_or_None
 
@@ -14,19 +10,22 @@ class CheckCourse:
 
     def check_course(self):
         "Есть ли курс"
+
         course = Course.objects.filter(pk=self.course).exists()
         if not course:
             return "Такого курса нет"
         return None
 
     def get_professor(self):
-
         "Проверка профессора"
+
         user = get_object_or_None(MyUser, username=self.username)
-        if user  != None and user.status == 'p':
+        if user != None and user.status == 'p':
             user_id = user.pk
-            owner= Course.objects.get(id=self.course).author_id
+            owner = Course.objects.get(id=self.course).author_id
             if owner == user_id:
                 return "Сам себя на курс профессор не может добавить"
+            if TeachCour.objects.filter(course_id=self.course).filter(teacher_id=user_id):
+                return "Профессор уже добавлен"
             return self.check_course()
         return "Такого профессора нет"

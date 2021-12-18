@@ -13,7 +13,7 @@ from conf.permission import IsOwnerOrReadOnly, IsProfessorOrReadOnly
 
 
 class CourseList(generics.ListCreateAPIView):
-    """Список своих курсов и приглашенных, а также добавление нового"""
+    """Список своих курсов и приглашенных, а также добавление нового курса"""
 
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     serializer_class = CourseSerializer
@@ -33,7 +33,7 @@ class CourseList(generics.ListCreateAPIView):
 
 
 class DetailCourse(generics.RetrieveUpdateDestroyAPIView):
-    "Могут смотреть студенты и профессора свой курс"
+    "Detail могут смотреть студенты и профессора свой курс, владельцы вносить изменения"
 
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     serializer_class = CourseSerializer
@@ -47,6 +47,10 @@ class DetailCourse(generics.RetrieveUpdateDestroyAPIView):
 
 
 class AddTeacher(GenericAPIView):
+    """ Добавляет профессора на курс и делает проверки (есть владелец ли курса профессор,
+    добавлен ли он на курс и т.д.
+    """
+
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, IsProfessorOrReadOnly]
 
     queryset = Course.objects.all()
@@ -57,16 +61,15 @@ class AddTeacher(GenericAPIView):
         serializer = CourseSerializer(quer)
         return Response(serializer.data)
 
-    def check_username(self, username):
+    def get_teacher_query(self, username):
         return get_object_or_None(MyUser, username=username)
 
     def post(self, request, pk):
 
         check = CheckCourse(pk, request.data['teacher']).get_professor()
         if check is None:
-            # CheckCourse(pk, 'admin', request).check_course()
             serializer = self.serializer_class(data=request.data)
-            teacher_pk = self.check_username(request.data['teacher'])
+            teacher_pk = self.get_teacher_query(request.data['teacher'])
             if serializer.is_valid() and teacher_pk:
                 TeachCour.objects.create(course_id=pk, teacher_id=teacher_pk.pk)
                 return Response(status=status.HTTP_201_CREATED)
@@ -77,34 +80,38 @@ class AddTeacher(GenericAPIView):
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY
             )
 
-# class AddTeacher(views.APIView):
-#     ''' Добавить препода????????????????'''
+
+# class AddStudent(GenericAPIView):
+#     """ Добавляет профессора на курс и делает проверки (есть владелец ли курса профессор,
+#     добавлен ли он на курс и т.д.
+#     """
 #
-#     # permission_classes = [IsAuthenticated, IsOwnerOrReadOnly ]
-#     # serializer_class = TeachCourSerializer
+#     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, IsProfessorOrReadOnly]
 #
-#     # def get(self, request,pk):
-#     #     # query= Course.objects.get(id=pk)
-#     #     # serializer = TeacherAddSerializer(query)
-#     #     data = Course.objects.get(pk=pk)
-#     #     serializer = TeacherAddSerializer(data)
-#     #
-#     #     return Response ({'course': serializer.data})
+#     queryset = Course.objects.all()
+#     serializer_class = AddTeacherSerializer
 #
+#     def get(self, request, pk):
+#         quer = Course.objects.get(id=pk)
+#         serializer = CourseSerializer(quer)
+#         return Response(serializer.data)
 #
-#     def post(self, request):
-#         serializer = TeacherAddSerializer()
-#         # course = TeachCour.objects.all()
-#         return Response(status=status.HTTP_201_CREATED)
+#     def get_teacher_query(self, username):
+#         return get_object_or_None(MyUser, username=username)
 #
-#     # def get(self,*args,**kwargs):
-#     #     query = Course.objects.get(id=8)
-#     #     serializer = CourseSerializer(query)
-#     #     return Response(serializer.data)
+#     def post(self, request, pk):
 #
-#     # def post(self):
-#     #     serializer = TeachCourSerializer
-#     #     if serializer.is_valid():
-#     #         # serializer.save()
-#     #         return Response(status=status.HTTP_201_CREATED)
-#
+#         check = CheckCourse(pk, request.data['teacher']).get_professor()
+#         if check is None:
+#             serializer = self.serializer_class(data=request.data)
+#             teacher_pk = self.get_teacher_query(request.data['teacher'])
+#             if serializer.is_valid() and teacher_pk:
+#                 TeachCour.objects.create(course_id=pk, teacher_id=teacher_pk.pk)
+#                 return Response(status=status.HTTP_201_CREATED)
+#         else:
+#             return Response({
+#                 "userMessage": check,
+#             },
+#                 status=status.HTTP_422_UNPROCESSABLE_ENTITY
+#             )
+

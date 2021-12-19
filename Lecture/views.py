@@ -1,29 +1,41 @@
-from django.db.models import Q
-from rest_framework import generics
+from rest_framework import status, generics
+from rest_framework.generics import GenericAPIView
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from Course.models import Course
 from Lecture.models import Lecture
-from Lecture.serializers import LectureSerializer
-from Person.models import MyUser
-from conf.permission import IsOwnerOrReadOnly
+from Lecture.serializers import LectureSerializer, CourseLectureSerializer
+from conf.permission import IsProfessorOrReadOnly, IsOwnerOrReadOnly, IsProffesorOwnerOrReadOnly
 
 
-class LectureList(generics.ListCreateAPIView):
-    """Список лекций"""
+class LectureToCourse(GenericAPIView):
+    """Список лекций к курсу может добавить профессор. ????? Подумать над приглашенным"""
 
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsProfessorOrReadOnly]
     serializer_class = LectureSerializer
+    parser_classes = (FormParser, MultiPartParser)
 
-    def get_queryset(self):
-        # person = MyUser.objects.get(username=self.request.user)
-        # user_pk = person.pk
-        # user_status = person.status
-        user = self.request.user
-        print(user.pk)
-        if user.status in ('p',):
-            return Lecture.objects.filter(course__author=user.pk)
+    def get(self, request, course_id):
+        quer = Course.objects.get(id=course_id)
+        serializer = CourseLectureSerializer(quer)
+        return Response(serializer.data)
 
+    def post(self, *args, **kwargs):
+        serializer = LectureSerializer(data=self.request.data)
+        if serializer.is_valid():
+            serializer.save(course_id=1, professor_id=self.request.user.id)
+            return Response(status=status.HTTP_200_OK)
 
     # def perform_create(self, serializer):
-    #     serializer.save(author=self.request.user)
+    #     serializer.save(course_id=1, professor_id=self.request.user.pk)
+
+
+class LectureRUD(generics.RetrieveUpdateDestroyAPIView):
+    """ Обновление, удаление лекции. Может только автор лекции """
+
+    permission_classes = [IsAuthenticated,IsProffesorOwnerOrReadOnly]
+    serializer_class = LectureSerializer
+    queryset = Lecture.objects.all()
+    lookup_field = 'id'                      #id лекции

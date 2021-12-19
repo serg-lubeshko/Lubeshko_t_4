@@ -58,7 +58,7 @@ class AddTeacher(GenericAPIView):
 
     def get(self, request, pk):
         quer = Course.objects.get(id=pk)
-        serializer = CourseSerializer(quer)
+        serializer = CourseSerializer(quer, many=True)
         return Response(serializer.data)
 
     def get_teacher_query(self, username):

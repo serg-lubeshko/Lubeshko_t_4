@@ -15,7 +15,7 @@ from conf.permission import IsOwnerOrReadOnly, IsProfessorOrReadOnly
 class CourseList(generics.ListCreateAPIView):
     """Список своих курсов и приглашенных, а также добавление нового курса"""
 
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, IsProfessorOrReadOnly]
     serializer_class = CourseSerializer
 
     def get_queryset(self):

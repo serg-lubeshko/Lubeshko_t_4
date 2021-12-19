@@ -22,10 +22,10 @@ class LectureToCourse(GenericAPIView):
         serializer = CourseLectureSerializer(quer)
         return Response(serializer.data)
 
-    def post(self, *args, **kwargs):
+    def post(self, request, course_id):
         serializer = LectureSerializer(data=self.request.data)
         if serializer.is_valid():
-            serializer.save(course_id=1, professor_id=self.request.user.id)
+            serializer.save(course_id=course_id, professor_id=self.request.user.id)  #ПООООМЕНЯТЬ ID
             return Response(status=status.HTTP_200_OK)
 
     # def perform_create(self, serializer):

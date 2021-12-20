@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'Person',
     'Lecture',
-    'Homework'
+    'Homework',
+    'Solution'
 ]
 
 MIDDLEWARE = [

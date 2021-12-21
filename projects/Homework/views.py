@@ -23,8 +23,9 @@ class HomeworkToLecture(generics.GenericAPIView):
     def post(self, request, lecture_id):
         serializer = HomeworkSerializer(data=self.request.data)
         if serializer.is_valid():
-            serializer.save(lecture_for_homework=self.get_lecture(lecture_id), professor_id=self.request.user.id)
-            return Response(status=status.HTTP_200_OK)
+            # serializer.save(lecture_for_homework=self.get_lecture(lecture_id), professor_id=self.request.user.id)
+
+            return Response(serializer.data,status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
             # serializer.save(course_id=1, professor_id=self.request.user.id)
             # return Response(status=status.HTTP_200_OK)

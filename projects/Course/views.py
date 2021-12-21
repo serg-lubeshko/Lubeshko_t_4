@@ -35,7 +35,7 @@ class CourseList(generics.ListCreateAPIView):
 class DetailCourse(generics.RetrieveUpdateDestroyAPIView):
     "Detail могут смотреть студенты и профессора свой курс, владельцы вносить изменения"
 
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, IsProfessorOrReadOnly]
     serializer_class = CourseSerializer
 
     def get_queryset(self):
@@ -47,32 +47,67 @@ class DetailCourse(generics.RetrieveUpdateDestroyAPIView):
 
 
 class AddTeacher(GenericAPIView):
-    """ Добавляет профессора на курс и делает проверки (есть владелец ли курса профессор,
-    добавлен ли он на курс и т.д.
+    """ Добавляет профессора на курс и делает проверки (есть владелец  курса,
+    не добавлен ли повторно)
     """
 
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, IsProfessorOrReadOnly]
-
-    queryset = Course.objects.all()
     serializer_class = AddTeacherSerializer
 
-    def get(self, request, pk):
-        quer = Course.objects.get(id=pk)
-        serializer = CourseSerializer(quer, many=True)
-        return Response(serializer.data)
+    def get(self, request, course_id):
+        try:
+            quer = Course.objects.get(id=course_id)
+            serializer = CourseSerializer(quer)
+            return Response(serializer.data)
+        except Course.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # def get_teacher_query(self, username):
+    #     return get_object_or_None(MyUser, username=username)
+
+    def post(self, request, course_id):
+        check = CheckCourse(course_id, request.data['teacher']).get_professor()  # Название подумать
+        if check is None:
+            serializer = self.serializer_class(data=request.data)
+            teacher_pk = MyUser.objects.filter(username=request.data['teacher'])[0].pk
+            if serializer.is_valid(raise_exception=True) and teacher_pk:
+                TeachCour.objects.create(course_id=course_id, teacher_id=teacher_pk)
+                return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response({
+                "userMessage": check,
+            },
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+
+class AddStudent(GenericAPIView):
+    """ Добавляет студента     """
+
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, IsProfessorOrReadOnly]
+    # queryset = Course.objects.all()
+    serializer_class = AddTeacherSerializer
+
+    def get(self, request, course_id):
+        try:
+            quer = Course.objects.get(id=course_id)
+            serializer = CourseSerializer(quer)
+            return Response(serializer.data)
+        except Course.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     def get_teacher_query(self, username):
         return get_object_or_None(MyUser, username=username)
 
-    def post(self, request, pk):
+    def post(self, request, course_id):
 
-        check = CheckCourse(pk, request.data['teacher']).get_professor()
+        check = CheckCourse(course_id, request.data['teacher']).get_professor()
         if check is None:
             serializer = self.serializer_class(data=request.data)
             teacher_pk = self.get_teacher_query(request.data['teacher'])
             if serializer.is_valid() and teacher_pk:
-                TeachCour.objects.create(course_id=pk, teacher_id=teacher_pk.pk)
-                return Response(status=status.HTTP_201_CREATED)
+                TeachCour.objects.create(course_id=course_id, teacher_id=teacher_pk.pk)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({
                 "userMessage": check,

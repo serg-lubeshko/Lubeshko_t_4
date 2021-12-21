@@ -31,8 +31,8 @@ class StudCour(models.Model):
 
 
 class TeachCour(models.Model):
-    teacher = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='tea')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='cou')
 
     def __str__(self):
         return f"{self.course}|{self.teacher}"

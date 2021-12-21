@@ -28,3 +28,5 @@ class SolutionToHomework(generics.GenericAPIView):
             serializer.save(homework_solution_id=homework_id, user_solution_id=self.request.user.id)
             return Response(serializer.data,status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+

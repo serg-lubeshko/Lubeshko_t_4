@@ -55,9 +55,9 @@ class AddTeacherSerializer(serializers.Serializer):
 
 
 class AddStudentSerializer(serializers.Serializer):
-    """ >>>    """
+    """ >>>  AddStudent  """
 
-    teacher = serializers.ChoiceField(choices=[i.username for i in MyUser.objects.filter(status='p')])
+    student = serializers.ChoiceField(choices=[i.username for i in MyUser.objects.filter(status='s')], source='teacher')
 
     class Meta:
-        fields = ['teacher']
+        fields = ['student']

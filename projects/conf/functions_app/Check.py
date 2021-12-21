@@ -1,4 +1,4 @@
-from projects.Course.models import Course, TeachCour
+from projects.Course.models import Course, TeachCour, StudCour
 from projects.Person.models import MyUser
 from projects.conf.functions_app.get_object_or_None import get_object_or_None
 
@@ -27,4 +27,21 @@ class CheckCourse:
             return "Сам себя на курс профессор не может добавить"
         if TeachCour.objects.filter(course_id=self.course).filter(teacher_id=user_id):
             return "Профессор уже добавлен"
+        return None
+
+    def get_student(self):
+        """  Проверка профессора добавлении на курс"""
+
+        user = get_object_or_None(MyUser, username=self.username)
+        print(user,'uuuuuuuuuuuuuuuuu')
+        if user is None or user.status != 's':
+            return "Такой пользователь не может быть добавлен"
+        course = self.check_course()
+        if course is None:
+            return "Такого курса нет"
+        user_id = user.pk
+        if course.author_id == user_id:
+            return "Сам себя на курс профессор не может добавить"
+        if StudCour.objects.filter(course_id=self.course).filter(student_id=user_id):
+            return "Студент уже добавлен"
         return None

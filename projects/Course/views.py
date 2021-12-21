@@ -4,8 +4,8 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from projects.Course.models import Course, TeachCour
-from projects.Course.serializers import CourseSerializer, AddTeacherSerializer
+from projects.Course.models import Course, TeachCour, StudCour
+from projects.Course.serializers import CourseSerializer, AddTeacherSerializer, AddStudentSerializer
 from projects.Person.models import MyUser
 from projects.conf.functions_app.Check import CheckCourse
 from projects.conf.functions_app.get_object_or_None import get_object_or_None
@@ -86,7 +86,7 @@ class AddStudent(GenericAPIView):
 
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, IsProfessorOrReadOnly]
     # queryset = Course.objects.all()
-    serializer_class = AddTeacherSerializer
+    serializer_class = AddStudentSerializer
 
     def get(self, request, course_id):
         try:
@@ -96,18 +96,19 @@ class AddStudent(GenericAPIView):
         except Course.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def get_teacher_query(self, username):
-        return get_object_or_None(MyUser, username=username)
+    # def get_teacher_query(self, username):
+    #     return get_object_or_None(MyUser, username=username)
 
     def post(self, request, course_id):
 
-        check = CheckCourse(course_id, request.data['teacher']).get_professor()
+        check = CheckCourse(course_id, request.data['student']).get_student()
         if check is None:
             serializer = self.serializer_class(data=request.data)
-            teacher_pk = self.get_teacher_query(request.data['teacher'])
-            if serializer.is_valid() and teacher_pk:
-                TeachCour.objects.create(course_id=course_id, teacher_id=teacher_pk.pk)
+            student_pk = MyUser.objects.filter(username=request.data['student'])[0].pk
+            if serializer.is_valid() and student_pk:
+                StudCour.objects.create(course_id=course_id, student_id=student_pk)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_404_NOT_FOUND)
         else:
             return Response({
                 "userMessage": check,

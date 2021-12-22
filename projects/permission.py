@@ -69,6 +69,7 @@ class IsRegisteredPersonHomework(permissions.BasePermission):
             return True
         return False
 
+
 # class XXXX(permissions.BasePermission):
 #
 #     def has_object_permission(self, request, view, obj):
@@ -77,3 +78,9 @@ class IsRegisteredPersonHomework(permissions.BasePermission):
 #             return True
 #
 #         return obj.professor.pk == request.user.pk
+
+class IsStudentOrReadOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        # if request.method in permissions.SAFE_METHODS:
+        #     return True
+        return request.user.status == 's'

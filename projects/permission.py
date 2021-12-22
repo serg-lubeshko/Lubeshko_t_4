@@ -55,6 +55,20 @@ class IsRegisteredPersonCourse(permissions.BasePermission):
             return True
         return False
 
+
+class IsRegisteredPersonHomework(permissions.BasePermission):
+    def has_permission(self, request, view):
+        param_lecture = request.parser_context['kwargs'].get('lecture_id')
+        param = Lecture.objects.get(id=param_lecture).course_id
+        status_user = request.user.status
+        if status_user in ('s'):
+            if request.method in permissions.SAFE_METHODS and StudCour.objects.filter(
+                    student_id=request.user.pk).filter(course_id=param):
+                return True
+        if status_user in ('p',) and TeachCour.objects.filter(teacher_id=request.user.pk).filter(course_id=param):
+            return True
+        return False
+
 # class XXXX(permissions.BasePermission):
 #
 #     def has_object_permission(self, request, view, obj):

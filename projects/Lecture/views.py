@@ -43,4 +43,4 @@ class LectureRUD(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, IsProffesorOwnerOrReadOnly]
     serializer_class = LectureSerializer
     queryset = Lecture.objects.all()
-    lookup_field = 'id'  # id лекции
+    lookup_field = "id"                         # id лекции

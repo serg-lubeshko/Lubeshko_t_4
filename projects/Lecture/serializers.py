@@ -11,7 +11,6 @@ class LectureSerializer(serializers.ModelSerializer):
 
     professor = UserSerializer(read_only=True)
     course = CourseSerializer(read_only=True)
-
     class Meta:
         model = Lecture
         fields = ['id', 'title', 'file_present', 'published_at', 'professor', 'course']

@@ -5,32 +5,25 @@ from rest_framework.response import Response
 from projects.Homework.models import Homework
 from projects.Homework.serializers import HomeworkSerializer, LectureFofHomework
 from projects.Lecture.models import Lecture
-from projects.permission import IsRegisteredPersonHomework
+from projects.permission import IsRegisteredPersonHomework, IsProffesorOwnerOrReadOnly
 
 
 class HomeworkToLecture(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsProffesorOwnerOrReadOnly]
     serializer_class = HomeworkSerializer
     queryset = Homework.objects.all()
 
-    # def get_lecture(self, lecture_id):
-    #     return Lecture.objects.filter(id=lecture_id)
-
     def get(self, request):
         query = Lecture.objects.filter(professor=self.request.user)
-        print(query)
         serializer = LectureFofHomework(query, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = HomeworkSerializer(data=self.request.data)
+        serializer = HomeworkSerializer(data=self.request.data,
+                                        context={'request': request})
         if serializer.is_valid(raise_exception=True):
-            print('ddddddddddddddddddddddd')
-            serializer.save(professor_id=self.request.user.id)
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        return Response(serializer.errors,status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-            # serializer.save(course_id=1, professor_id=self.request.user.id)
-            # return Response(status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 # class HomeworkToLecture(generics.ListCreateAPIView):
 #     serializer_class = HomeworkSerializer

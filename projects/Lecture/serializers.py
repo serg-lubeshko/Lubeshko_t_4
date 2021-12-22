@@ -32,10 +32,11 @@ class LectureSerializer(serializers.ModelSerializer):
 class CourseLectureSerializer(serializers.ModelSerializer):
     ''' >>> LectureToCourse '''
 
-    lectures=serializers.StringRelatedField(many=True, read_only=True)
+    # lectures=serializers.StringRelatedField(many=True, read_only=True)
+    lectures=LectureSerializer(many=True, read_only=True)
+    name_course = serializers.CharField(source='name')
     # course=serializers.Lecture2Serializer(many=True, read_only=True)
-
     class Meta:
         model = Course
-        fields = ['id','name','lectures']
+        fields = [ 'name_course','lectures']
             

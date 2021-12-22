@@ -17,12 +17,18 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = ['id', 'author', 'name', 'description', 'published_at', 'update_at']
 
 
+
+
+
 class StudCourSerializer(serializers.ModelSerializer):
     course = CourseSerializer()
 
     class Meta:
         model = StudCour
         fields = ['id', 'student', 'course']
+
+
+
 
 
 class TeachAddSerializer(serializers.ModelSerializer):
@@ -61,3 +67,5 @@ class AddStudentSerializer(serializers.Serializer):
 
     class Meta:
         fields = ['student']
+
+

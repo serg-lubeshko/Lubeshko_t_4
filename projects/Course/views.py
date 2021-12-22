@@ -23,13 +23,14 @@ class CourseList(generics.ListCreateAPIView):
         user_pk = person.pk
         user_status = person.status
         if user_status in ('p',):
-            return Course.objects.filter(Q(teacher=user_pk) | Q(author_id=user_pk))
+            return Course.objects.filter(teacher=user_pk)
 
         if user_status in ('s',):
-            return Course.objects.filter(Q(student=user_pk) | Q(author_id=user_pk))
+            return Course.objects.filter(student=user_pk)
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        course_object=serializer.save(author=self.request.user)
+        TeachCour.objects.create(course_id=course_object.id, teacher_id=course_object.author_id)
 
 
 class DetailCourse(generics.RetrieveUpdateDestroyAPIView):

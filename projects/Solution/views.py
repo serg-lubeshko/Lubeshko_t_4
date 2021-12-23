@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from projects.Course.models import StudCour
 from projects.Homework.models import Homework
 from projects.Lecture.models import Lecture
-from projects.Solution.serializers import HomeworkForSolution, SolutionSerializers, SolutionForProfessorCheck
+from projects.Solution.serializers import HomeworkForSolution, SolutionSerializers
 from projects.permission import IsRegisteredStudent, IsStudentOrReadOnly, IsProffesorOwnerOrReadOnly, IsOwnerOrReadOnly
 
 
@@ -48,11 +48,4 @@ class SolutionToHomework(generics.GenericAPIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProfessorWatchHomework(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-    serializer_class = SolutionForProfessorCheck
 
-    def get(self, request):
-        query = Homework.objects.filter(lecture_for_homework__course__student=self.request.user)
-        serializer = HomeworkForSolution(query, many=True)
-        return Response(serializer.data)

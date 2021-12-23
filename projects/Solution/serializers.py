@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from projects.Homework.models import Homework
 from projects.Lecture.serializers import LectureSerializer
+from projects.Person.models import MyUser
 from projects.Solution.models import Solution
 
 
@@ -30,8 +31,3 @@ class HomeworkForSolution(serializers.ModelSerializer):
     class Meta:
         model = Homework
         fields = ['id', 'title', 'homework_task', 'lecture_for_homework']
-
-class SolutionForProfessorCheck(serializers.ModelSerializer):
-    class Meta:
-        model = Solution
-        fields = ['id', 'solution_task', 'user_solution', 'mark']

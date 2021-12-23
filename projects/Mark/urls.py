@@ -1,9 +1,10 @@
 from django.urls import path
 
+from projects.Mark.views import ProfessorWatchHomework
 
 urlpatterns = [
 
-    # path('all', LectureList.as_view()),
+    path('professor-watch-homework/', ProfessorWatchHomework.as_view()),
 
 
 ]

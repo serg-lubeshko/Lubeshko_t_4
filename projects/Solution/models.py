@@ -12,7 +12,7 @@ class Solution(models.Model):
                                       verbose_name='Студент')
     homework_solution = models.ForeignKey(Homework, on_delete=models.CASCADE, related_name='homework_solution',
                                           verbose_name='Домашняя работа')
-    mark = models.SmallIntegerField(verbose_name='Оценка', blank=True, null=True)
+    # mark = models.SmallIntegerField(verbose_name='Оценка', blank=True, null=True)
     task_solved = models.BooleanField(verbose_name='Задача решена?')
 
     def __str__(self):

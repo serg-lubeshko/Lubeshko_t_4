@@ -21,8 +21,8 @@ class HomeworkSerializer(serializers.ModelSerializer):
         data_dict = dict(data)
         if Homework.objects.filter(professor_id=user_id, lecture_for_homework=lecture_id).count() > 0:
             raise serializers.ValidationError("Вы добавили уже домашнюю работу")
-        if Lecture.objects.filter(id=data_dict['lecture_for_homework_id']).first().professor.pk != user_id:
-            raise serializers.ValidationError("У вас нет прав")
+        # if Lecture.objects.filter(id=data_dict['lecture_for_homework_id']).first().professor.pk != user_id:
+        #     raise serializers.ValidationError("У вас нет прав")
         return data
 
 

@@ -39,11 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_yasg',
+
     'projects.Person.apps.PersonConfig',
     'projects.Course.apps.CourseConfig',
     'projects.Lecture.apps.LectureConfig',
     'projects.Homework.apps.HomeworkConfig',
     'projects.Solution.apps.SolutionConfig',
+    'projects.Mark.apps.MarkConfig',
 ]
 
 MIDDLEWARE = [

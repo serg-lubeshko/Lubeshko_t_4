@@ -30,3 +30,8 @@ class HomeworkForSolution(serializers.ModelSerializer):
     class Meta:
         model = Homework
         fields = ['id', 'title', 'homework_task', 'lecture_for_homework']
+
+class SolutionForProfessorCheck(serializers.ModelSerializer):
+    class Meta:
+        model = Solution
+        fields = ['id', 'solution_task', 'user_solution', 'mark']

@@ -3,6 +3,7 @@ from rest_framework import permissions
 from projects.Course.models import Course, StudCour, TeachCour
 from projects.Homework.models import Homework
 from projects.Lecture.models import Lecture
+from projects.Solution.models import Solution
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
@@ -24,10 +25,10 @@ class IsProfessorOrReadOnly(permissions.BasePermission):
 
 class IsProffesorOwnerOrReadOnly(permissions.BasePermission):
 
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
+    def has_object(self, request, view, obj):
+        # if request.method in permissions.SAFE_METHODS:
+        #     return True
+        print(obj, '***********')
         return obj.professor.pk == request.user.pk
 
 
@@ -68,6 +69,42 @@ class IsRegisteredPersonHomework(permissions.BasePermission):
         if status_user in ('p',) and TeachCour.objects.filter(teacher_id=request.user.pk).filter(course_id=param):
             return True
         return False
+
+
+# class IsProfessorOrReadOnlyMark(permissions.BasePermission):
+#     def has_permission(self, request, view):
+#         print('eddedede')
+#         # if request.method in permissions.SAFE_METHODS:
+#         #     return True
+#         return bool(
+#             request.user.status == 'p',
+#         )
+
+
+class IsProfessorOrReadOnlyMark(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return request.user.status == 'p'
+        try:
+            param_solution = request.data['solution_id']
+            professor_pk = Homework.objects.get(homework_solution__id=param_solution).professor_id
+        except Homework.DoesNotExist:
+            return False
+        return bool(request.user.status == 'p' and request.user.pk == professor_pk)
+
+
+class IsProfessorOrReadOnlyMarkDetail(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return request.user.status == 'p'
+        # param_solution = request.data['solution_id']
+        print(request.parser_context['kwargs'])
+        try:
+            param_solution = request.parser_context['kwargs'].get('solution_id')
+            professor_pk = Homework.objects.get(homework_solution__id=param_solution).professor_id
+        except Homework.DoesNotExist:
+            return False
+        return bool(request.user.status == 'p' and request.user.pk == professor_pk)
 
 
 # class XXXX(permissions.BasePermission):

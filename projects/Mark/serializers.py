@@ -9,7 +9,7 @@ from projects.Solution.serializers import SolutionSerializers
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageTeacher
-        fields = ['text']
+        fields = ['id', 'text']
 
 
 class MarkSerializer(serializers.ModelSerializer):
@@ -25,15 +25,8 @@ class MarkSerializer(serializers.ModelSerializer):
         message = dict(validated_data.pop('mark_message'))
         mark_id = (Mark.objects.create(**validated_data)).pk
         instance = message | {'mark_message_id': mark_id}
-        MessageTeacher.objects.create(**instance)
-        return validated_data
+        return MessageTeacher.objects.create(**instance)
 
-    def validate(self, data):
-        user_id = self.context['request'].user.pk
-        solutions_id = self.context['request'].data['solution_id']
-        data_dict = dict(data)
-        if Mark.objects.filter(user_mark_id=user_id, solution_id=solutions_id).count() > 0:
-            raise serializers.ValidationError("Оценка уже добавлен")
 
 class SolutionForProfessorCheckSerializer(serializers.ModelSerializer):
     id_user = serializers.IntegerField(source='id', read_only=True)
@@ -42,3 +35,17 @@ class SolutionForProfessorCheckSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
         fields = ['id_user', 'username', 'user_solution', ]
+
+
+class MarkDetailSerializers(serializers.ModelSerializer):
+    message_professor = MessageSerializer(read_only=True, many=True, source='mark_message')
+
+    class Meta:
+        model = Mark
+        fields = ['mark', 'solution_id', 'message_professor']
+
+
+# class TextDetailSerializers(serializers.ModelSerializer):
+#     class Meta:
+#         model = MessageTeacher
+#         fields = ['text', 'mark_message']
